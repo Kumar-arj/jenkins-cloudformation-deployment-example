@@ -1,4 +1,5 @@
-FROM jenkins/jenkins:2.298
+# Jenkins Manager
+FROM jenkins/jenkins:latest
 
 USER root
 
@@ -22,15 +23,16 @@ COPY plugins/plugins.txt /usr/share/jenkins/plugins.txt
 COPY plugins/plugins_dev.txt /usr/share/jenkins/plugins_dev.txt
 
 # install Recommended Plugins
-RUN set +x \
-    && /usr/local/bin/install-plugins.sh < /usr/share/jenkins/plugins.txt
+RUN jenkins-plugin-cli \
+ --plugins  < /usr/share/jenkins/plugins.txt
 
 # install Additional Plugins
-RUN set +x \
-    && /usr/local/bin/install-plugins.sh < /usr/share/jenkins/plugins_dev.txt
+RUN jenkins-plugin-cli \
+ --plugins < /usr/share/jenkins/plugins_dev.txt
 
 # change directory owner for jenkins home
 RUN chown -R jenkins:jenkins /var/jenkins_home
 
 # drop back to the regular jenkins user - good practice
 USER jenkins
+
